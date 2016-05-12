@@ -1,0 +1,168 @@
+<?php
+/**
+ * Generated using code generator
+ * Templates located in modules/generator/api/_templates dir
+ * 
+ * @author Jan Jezek | http://www.sreknord.net | contact: leonard at instantaccess.nl
+ */
+class __CLASS_NAME__
+{
+    /**
+     * Zend db table object
+     * 
+     * @var Zend_Db_Table_Abstract
+     */
+	protected $_dbTable;
+
+    /**
+     * Return instance of Zend_Db_Table_Abstract set for this mapper
+     * 
+     * @return __TABLE_NAME__
+     */
+    public function getDbTable()
+    {
+        if (null === $this->_dbTable) {
+            $this->setDbTable('__TABLE_NAME__');
+        }
+        return $this->_dbTable;
+    }
+
+	/**
+	 * Set dbTable object
+	 * 
+	 * @param string $dbTable
+	 * @return this mapper class instance
+	 */
+    public function setDbTable($dbTable)
+    {
+        if (is_string($dbTable)) {
+            $dbTable = new $dbTable();
+        }
+        if (!$dbTable instanceof Zend_Db_Table_Abstract) {
+            throw new Exception('Invalid table data gateway provided');
+        }
+        $this->_dbTable = $dbTable;
+        return $this;
+    }
+
+
+    /**
+     * Save data from model, when id is set, it will try and update
+     * 
+     * @param __MODEL_NAME__ instance
+     * @return void
+     */
+    public function save(__MODEL_NAME__ $model)
+    {
+        $data = __MODEL_DATA_ARRAY__
+
+        // if empty make NEW
+        if (null === ($id = $model->getId())) {
+            $this->getDbTable()->insert($data);
+        } else {
+            $this->getDbTable()->update($data, array('id = ?' => $id));
+        }
+        return $this;
+    }
+    
+    /**
+     * Insert data from model
+     * 
+     * @param __MODEL_NAME__ instance
+     * @return void
+     */
+    public function insert(__MODEL_NAME__ $model)
+    {
+    	$data = __MODEL_DATA_ARRAY__
+    	$this->getDbTable()->insert($data);
+    }
+    
+    /**
+     * Update data from model
+     * 
+     * @param __MODEL_NAME__ instance
+     * @param string $where
+     * @return void
+     * @todo uset primary key!?
+     */
+    public function update(__MODEL_NAME__ $model, $where)
+    {
+    	$data = __MODEL_DATA_ARRAY__
+    	$this->getDbTable()->update($data, $where);
+    }
+    
+    /**
+     * Map data to model
+     * 
+     * @param Zend_Db_Table_Row row
+     * @param __MODEL_NAME__ $model
+     * @return void
+     */
+    public function map($row, __MODEL_NAME__ $model)
+    {
+    __MODEL_SET_PROPERTIES__
+    }
+
+    /**
+     * Find a record of Model, when found model is set
+     * 
+     * @param $id
+     * @return __MODEL_NAME__
+     */
+    public function find($id)
+    {
+        $result = $this->getDbTable()->find($id);
+        if (0 == count($result)) {
+            return;
+        }
+        $model = new __MODEL_NAME__();
+        $this->map($result->current(), $model);
+        return $model;
+    }
+
+    /**
+     * Fetch all records from Model used
+     * 
+     * @return array of __MODEL_NAME__
+     */
+    public function fetchAll($where = null, $order = null, $count = null, $offset = null)
+    {
+        $resultSet = $this->getDbTable()->fetchAll($where, $order, $count, $offset);
+        $entries   = array();
+        foreach ($resultSet as $row) {
+            $model = new __MODEL_NAME__();
+			$this->map($row, $model);
+            $entries[] = $model;
+        }
+        return $entries;
+    }
+    
+    /**
+     * Find a row of Model, when found model is set
+     * 
+     * @param $where
+     * @param $order
+     * @return __MODEL_NAME__
+     */
+    public function fetchRow($where = null, $order = null)
+    {
+    	$result = $this->getDbTable()->fetchRow($where, $order);
+        if (null === $result) {
+            return;
+        }
+        $model = new __MODEL_NAME__();
+        $this->map($result, $model);
+        return $model;
+    }
+    
+    /**
+     * Delete
+     *  
+     * @param array|string $where SQL WHERE clause(s).
+     * @return int 		   The number of rows deleted.
+     */
+    public function delete($where)
+    {
+    	return $this->getDbTable()->delete($where);
+    }
+}

@@ -1,0 +1,102 @@
+<?php
+/**
+ * 
+ * @author webdesign solution | http://www.webdesign-solution.eu | contact: Jan Jezek
+ */
+class __CLASS_NAME__
+{
+   /**
+    * Properties
+    */
+    
+    protected $_mapper;
+__CLASS_PROPERTIES__
+	/**
+	 * Model class constructor
+	 * 
+	 * @param array $options, to set model properties
+	 */
+    public function __construct(array $options = null)
+    {
+        if (is_array($options)) {
+            $this->setOptions($options);
+        }
+    }
+    
+	/**
+     * Magic method to get property values
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        $method = 'get' . ucfirst($name);
+        
+        if (('mapper' == $name) || !method_exists($this, $method)) {
+            throw new Exception('Invalid Getter Method:' . $method);
+        }
+        return $this->$method();
+    }
+	
+    /**
+     * Magic method to set properties
+     * 
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value)
+    {
+        $method = 'set' . ucfirst($name);
+        if (('mapper' == $name) || !method_exists($this, $method)) {
+            throw new Exception('Invalid Setter Method for property:' . $name);
+        }
+        $this->$method($value);
+    }
+
+
+    /**
+     * Set Model properties
+     * 
+     * @param array $options
+     * @return this Model instance
+     */
+    public function setOptions(array $options)
+    {
+        $methods = get_class_methods($this);
+        foreach ($options as $key => $value) {
+            $method = 'set' . ucfirst($key);
+            if (in_array($method, $methods)) {
+                $this->$method($value);
+            }
+        }
+        return $this;
+    }
+    
+    public function getMapper($mapper) {
+        if (null === $this->_mapper) {
+           $this->_mapper = new __MAPPER_CLASS__;
+        
+        }
+    }
+    public function setMapper($mapper) {
+        $this->_mapper = $mapper;
+        return $this;
+    }
+
+   /**
+    * Model Accessors
+    */
+
+   __MODEL_ACCESSORS__
+   
+    /**
+     * Return object as array
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        __MODEL_TO_ARRAY__
+    }
+}
